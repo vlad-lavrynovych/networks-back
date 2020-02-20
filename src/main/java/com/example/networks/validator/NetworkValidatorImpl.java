@@ -17,7 +17,7 @@ public class NetworkValidatorImpl implements Validator {
 
     private boolean validateHierarchy(NodeEntity nodeEntity) {
         boolean result = checkHierarchy(nodeEntity);
-        if (!nodeEntity.getChildren().isEmpty()) {
+        if (nodeEntity.getChildren() != null && !nodeEntity.getChildren().isEmpty()) {
             for (NodeEntity node :
                     nodeEntity.getChildren()) {
                 result = result && validateHierarchy(node);
@@ -32,13 +32,12 @@ public class NetworkValidatorImpl implements Validator {
         return idsList.size() == new HashSet<>(idsList).size();
     }
 
-    private List<String> mapNodesToListOfIds(NodeEntity nodeEntity, List<String> ids) {
-        if (nodeEntity != null) {
+    private void mapNodesToListOfIds(NodeEntity nodeEntity, List<String> ids) {
+        if (nodeEntity != null && nodeEntity.getChildren() != null) {
             ids.add(nodeEntity.getId());
             List<NodeEntity> children = nodeEntity.getChildren();
             children.stream().filter(child -> child.getChildren() != null).forEach(child -> mapNodesToListOfIds(child, ids));
         }
-        return ids;
     }
 
     private boolean checkHierarchy(NodeEntity nodeEntity) {
